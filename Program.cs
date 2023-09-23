@@ -12,6 +12,8 @@ namespace EmployeeManagementSystem
         {
             var builder = WebApplication.CreateBuilder(args);
 
+           
+
             builder.Services.AddDbContext<EmployeeDbContext>(options =>
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -21,19 +23,19 @@ namespace EmployeeManagementSystem
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 
-
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
             builder.Services.AddControllers().AddNewtonsoftJson();
             builder.Services.AddSwaggerGen(s =>
             {
                 s.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployeeManagementAPI", Version = "v1" });
             });
             builder.Services.AddSwaggerGenNewtonsoftSupport();
-
+            
+            builder.Services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
+            
+            builder.Services.AddKendo();
 
             var app = builder.Build();
-
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -58,7 +60,7 @@ namespace EmployeeManagementSystem
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Employee}/{action=Index}");
 
             app.Run();
         }

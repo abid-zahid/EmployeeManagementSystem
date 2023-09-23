@@ -8,7 +8,10 @@ namespace EmployeeManagementSystem.Services
     {
         public MapperProfile()
         {
-            CreateMap<Employee, EmployeeViewModel>().ReverseMap();
+            CreateMap<Employee, EmployeeViewModel>()
+                .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department.DepartmentName));
+            CreateMap<EmployeeViewModel, Employee>()
+                .ForMember(dest => dest.Department, opt => opt.Ignore());
             CreateMap<Department, DepartmentViewModel>().ReverseMap();
         }
     }

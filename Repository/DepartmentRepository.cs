@@ -22,12 +22,12 @@ namespace EmployeeManagementSystem.Repository
 
         public async Task<IEnumerable<Department>> GetAllAsync()
         {
-            return await _context.Departments.ToListAsync();
+            return await _context.Departments.Where(x => !x.IsDeleted).ToListAsync();
         }
 
         public async Task<Department> GetAsync(Guid id)
         {
-            return await _context.Departments.FirstAsync(x => x.Id == id);
+            return await _context.Departments.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
         }
 
         public async Task<Department> SaveAsync(Department department)

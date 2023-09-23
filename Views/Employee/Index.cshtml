@@ -1,0 +1,86 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using EmployeeManagementSystem.ViewModel;
+@using Kendo.Mvc.UI
+@addTagHelper *, Kendo.Mvc
+@{
+
+    ViewData["Title"] = "Home Page";
+
+}
+
+<div class="col-12">
+    <kendo-grid name="employeeGrid">
+        <toolbar>
+            <toolbar-button name="search"></toolbar-button>
+            <toolbar-button name="create"></toolbar-button>
+        </toolbar>
+        <search fields="@(new string[] { "Name", "Department", "DateOfBirth", "Email"})" />
+
+        <datasource type="DataSourceTagHelperType.Ajax"
+                    on-error="errorHandler">
+            <schema data="Data" total="Total">
+                <model id="Id">
+                    <fields>
+                        <field name="Id" type="guid" editable="false" default-value="Guid.NewGuid()"></field>
+                        <field name="Name" type="string"></field>
+                        <field name="Email" type="string"></field>
+                        <field name="DateOfBirth" type="Date" ></field>
+                        <field name="IsActive" type="boolean"></field>
+                        <field name="DepartmentId" type="guid" default-value='((DepartmentViewModel)ViewData["DefaultDepartment"]).Id'></field>
+                    </fields>
+                </model>
+            </schema>
+            <transport>
+                <read url="@Url.Action("EmployeeList", "Employee")" />
+                <update url="@Url.Action("UpdateEmployee", "Employee")" />
+                <create url="@Url.Action("CreateEmployee", "Employee")" />
+                <destroy url="@Url.Action("DeleteEmployee", "Employee")" />
+            </transport>
+         
+        </datasource>
+        <groupable enabled="true" />
+        <sortable enabled="true" />
+        <filterable enabled="true" />
+        <scrollable enabled="true" />
+        <editable mode="inline" />
+        <pageable button-count="5" refresh="true" page-sizes="new int[] { 2, 5, 10 }"></pageable>
+
+        <columns>
+            <column field="Name" title="Employee Name" ></column>
+            <column field="Email" ></column>
+            <column field="DateOfBirth" title="Date Of Birth"  format="{0:MM/dd/yyyy}"></column>
+            <column field="IsActive" title="Is Active" ></column>
+            <foreign-key-column field="DepartmentId" title="Department" 
+                                values='(System.Collections.IEnumerable)ViewData["Departments"]'
+                                value-field="Id"
+                                text-field="DepartmentName">
+            </foreign-key-column>
+            <column >
+                <commands>
+                    <column-command text="Edit" name="edit"></column-command>
+                    <column-command text="Delete" name="destroy"></column-command>
+                </commands>
+            </column>
+        </columns>
+
+
+    </kendo-grid>
+
+</div>
+<script type="text/javascript">
+    function errorHandler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+        }
+    }
+</script>

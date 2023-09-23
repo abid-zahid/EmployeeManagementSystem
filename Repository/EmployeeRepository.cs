@@ -22,12 +22,12 @@ namespace EmployeeManagementSystem.Repository
 
         public async Task<IEnumerable<Employee>> GetAllAsync()
         {
-            return await _context.Employees.Include(x => x.Department).ToListAsync();
+            return await _context.Employees.Include(x => x.Department).Where(x => !x.IsDeleted).ToListAsync();
         }
 
         public async Task<Employee> GetAsync(Guid id)
         {
-            return await _context.Employees.Include(x => x.Department).FirstAsync(_ => _.Id == id);
+            return await _context.Employees.Include(x => x.Department).FirstAsync(_ => _.Id == id && !_.IsDeleted);
         }
 
         public async Task<Employee> SaveAsync(Employee employee)
